@@ -52,10 +52,15 @@ _Avoid_: npm-only frontend check
 The detailed documentation that explains how a Laravel project copies and uses the scaffold.
 _Avoid_: Git guide, contribution policy
 
+**Integration Profile**:
+A tailored set of **Starter Files** for a known Laravel project shape.
+_Avoid_: fork, preset, app template
+
 ## Relationships
 
 - A **Local CI Signoff Scaffold** is copied into a Laravel project.
 - A **Local CI Signoff Scaffold** contains one or more **Starter Files**.
+- An **Integration Profile** adapts **Starter Files** to a known Laravel project shape.
 - The **Adoption Guide** explains how a Laravel project uses the **Starter Files**.
 - A Laravel project runs local checks before publishing **Signoff Statuses**.
 - The canonical **Signoff Statuses** are **Lint Signoff**, **Static Signoff**, **Tests Signoff**, and **Security Signoff**.
@@ -84,6 +89,8 @@ _Avoid_: Git guide, contribution policy
 > **Domain expert:** "No — frontend checks use **Frontend Lockfile Detection**."
 > **Dev:** "Should this live in `CONTRIBUTING.md`?"
 > **Domain expert:** "No — the scaffold should have an **Adoption Guide** that can be copied without replacing a project's contribution policy."
+> **Dev:** "Should a `laravel/react-starter-kit` app use the generic scaffold unchanged?"
+> **Domain expert:** "No — use an **Integration Profile** that wraps the starter kit's existing scripts."
 
 ## Flagged ambiguities
 

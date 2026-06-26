@@ -11,6 +11,11 @@ Copy these starter files into a Laravel project:
 - `LOCAL_CI.md`
 - `starter-files/github-workflows/ci.yml` if you want the optional remote backup workflow
 
+For applications created from `laravel/react-starter-kit`, use the tailored profile instead:
+
+- `starter-files/laravel-react/bin/ci`
+- `starter-files/laravel-react/README.md`
+
 Then install the required project tools and GitHub signoff extension:
 
 ```bash

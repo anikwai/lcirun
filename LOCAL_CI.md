@@ -26,6 +26,19 @@ The workflow file is optional. Copy it to `.github/workflows/ci.yml` in the cons
 
 The starter defaults to PHP 8.5 for the optional GitHub Actions backup workflow.
 
+## Laravel React Starter Kit Profile
+
+Applications created from `laravel/react-starter-kit` already include Pint, Larastan, PHPStan configuration, npm quality scripts, and Composer quality scripts. For those apps, prefer the tailored profile:
+
+```bash
+cp starter-files/laravel-react/bin/ci bin/ci
+chmod +x bin/ci
+```
+
+Do not copy the generic `phpstan.neon.dist` into a React starter-kit app unless you intentionally want to replace its existing `phpstan.neon`.
+
+The tailored profile uses npm because the official React starter kit's own setup and workflows use npm scripts. It runs both Composer and npm security audits before publishing signoff.
+
 ## Install Required Tools
 
 Install the Laravel quality tools in the consuming project:

@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Starting Laravel React starter-kit local CI..."
+
+if [ ! -f composer.json ] || [ ! -f package.json ]; then
+    echo "composer.json and package.json were not found. Run this script from a Laravel React starter-kit project root."
+    exit 1
+fi
+
+if [ ! -f phpstan.neon ]; then
+    echo "phpstan.neon was not found. This profile expects the Laravel React starter kit's PHPStan configuration."
+    exit 1
+fi
+
+if [ ! -f composer.lock ]; then
+    echo "composer.lock was not found. Commit a lockfile before relying on local CI signoff."
+    exit 1
+fi
+
+if [ ! -f package-lock.json ]; then
+    echo "package-lock.json was not found. This profile expects npm with a committed package lockfile."
+    exit 1
+fi
+
+for extra_lockfile in bun.lock bun.lockb pnpm-lock.yaml yarn.lock; do
+    if [ -f "$extra_lockfile" ]; then
+        echo "$extra_lockfile was found, but this profile expects npm via package-lock.json."
+        echo "Remove the extra lockfile or customize bin/ci for your package manager."
+        exit 1
+    fi
+done
+
+echo "Installing PHP dependencies..."
+composer install --no-interaction --prefer-dist
+
+echo "Installing npm dependencies..."
+npm ci --no-audit
+
+echo "Running Composer security audit..."
+composer audit
+
+echo "Running npm security audit..."
+npm audit
+
+echo "Building frontend assets..."
+npm run build
+
+echo "Running starter-kit quality checks..."
+composer ci:check
+
+echo "All checks passed. Ready to sign off."
