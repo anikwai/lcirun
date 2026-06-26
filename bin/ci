@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Starting Laravel local CI..."
+
+if [ ! -f composer.json ]; then
+    echo "composer.json was not found. Run this script from a Laravel project root."
+    exit 1
+fi
+
+if [ ! -f composer.lock ]; then
+    echo "composer.lock was not found. Commit a lockfile before relying on local CI signoff."
+    exit 1
+fi
+
+echo "Installing PHP dependencies..."
+composer install --no-interaction --prefer-dist
+
+echo "Running Composer security audit..."
+composer audit
+
+echo "Running Pint..."
+./vendor/bin/pint --test
+
+echo "Running PHPStan/Larastan..."
+./vendor/bin/phpstan analyse --no-progress
+
+echo "Clearing Laravel config..."
+php artisan config:clear
+
+echo "Running tests..."
+php artisan test --parallel
+
+if [ -f package.json ]; then
+    echo "Running frontend build..."
+
+    frontend_lockfiles=()
+    [ -f bun.lockb ] && frontend_lockfiles+=("bun.lockb")
+    [ -f bun.lock ] && frontend_lockfiles+=("bun.lock")
+    [ -f pnpm-lock.yaml ] && frontend_lockfiles+=("pnpm-lock.yaml")
+    [ -f yarn.lock ] && frontend_lockfiles+=("yarn.lock")
+    [ -f package-lock.json ] && frontend_lockfiles+=("package-lock.json")
+
+    if [ "${#frontend_lockfiles[@]}" -gt 1 ]; then
+        echo "Multiple frontend lockfiles were found: ${frontend_lockfiles[*]}"
+        echo "Keep exactly one lockfile or customize bin/ci."
+        exit 1
+    fi
+
+    if [ -f bun.lockb ] || [ -f bun.lock ]; then
+        command -v bun >/dev/null || { echo "bun is required because a Bun lockfile was found."; exit 1; }
+        bun install --frozen-lockfile
+        bun run build
+    elif [ -f pnpm-lock.yaml ]; then
+        command -v pnpm >/dev/null || { echo "pnpm is required because pnpm-lock.yaml was found."; exit 1; }
+        pnpm install --frozen-lockfile
+        pnpm run build
+    elif [ -f yarn.lock ]; then
+        command -v yarn >/dev/null || { echo "yarn is required because yarn.lock was found."; exit 1; }
+        yarn install --frozen-lockfile
+        yarn build
+    elif [ -f package-lock.json ]; then
+        command -v npm >/dev/null || { echo "npm is required because package-lock.json was found."; exit 1; }
+        npm ci --no-audit
+        npm run build
+    else
+        echo "package.json exists, but no recognized lockfile was found."
+        echo "Add bun.lock, pnpm-lock.yaml, yarn.lock, or package-lock.json, or customize bin/ci."
+        exit 1
+    fi
+fi
+
+echo "All checks passed. Ready to sign off."

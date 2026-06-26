@@ -1,0 +1,7 @@
+/vendor/
+/node_modules/
+/.phpunit.cache/
+/.phpstan.cache/
+/.pint.cache
+/.env
+/.env.*.local
