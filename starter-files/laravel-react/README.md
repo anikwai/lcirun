@@ -32,6 +32,22 @@ The upstream starter-kit skeleton may not include those lockfiles before project
 
 The tailored runner installs locked PHP and npm dependencies, runs strict Composer and npm security audits, builds frontend assets, and then delegates to the starter kit's `composer ci:check` script.
 
+## Optional Husky Hooks
+
+Use Husky when you want fast local guardrails before commits and pushes:
+
+```bash
+npm install --save-dev husky
+npm pkg set scripts.prepare="husky"
+npm run prepare
+cp starter-files/laravel-react/husky/pre-commit .husky/pre-commit
+cp starter-files/laravel-react/husky/pre-push .husky/pre-push
+```
+
+The `pre-commit` hook runs fast formatting, frontend lint, frontend type, and PHP style/static checks through the starter kit's existing scripts. The `pre-push` hook runs `./bin/ci`.
+
+Husky does not replace local CI or GitHub signoff. Treat it as early feedback only.
+
 ## Signoff
 
 After `./bin/ci` passes on a committed and pushed branch:

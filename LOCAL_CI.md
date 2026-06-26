@@ -39,6 +39,18 @@ Do not copy the generic `phpstan.neon.dist` into a React starter-kit app unless 
 
 The tailored profile uses npm because the official React starter kit's own setup and workflows use npm scripts. It runs both Composer and npm security audits before publishing signoff.
 
+An optional Husky profile is available for fast Git hook guardrails:
+
+```bash
+npm install --save-dev husky
+npm pkg set scripts.prepare="husky"
+npm run prepare
+cp starter-files/laravel-react/husky/pre-commit .husky/pre-commit
+cp starter-files/laravel-react/husky/pre-push .husky/pre-push
+```
+
+The hooks are intentionally not the authority. They catch common issues before commit or push; `./bin/ci` and `gh-signoff` remain the merge contract.
+
 ## Install Required Tools
 
 Install the Laravel quality tools in the consuming project:

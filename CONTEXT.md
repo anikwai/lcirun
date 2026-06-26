@@ -56,6 +56,10 @@ _Avoid_: Git guide, contribution policy
 A tailored set of **Starter Files** for a known Laravel project shape.
 _Avoid_: fork, preset, app template
 
+**Local Hook Guard**:
+A fast Git hook check that catches common issues before local CI runs.
+_Avoid_: CI replacement, signoff gate
+
 ## Relationships
 
 - A **Local CI Signoff Scaffold** is copied into a Laravel project.
@@ -68,6 +72,7 @@ _Avoid_: fork, preset, app template
 - A **Tests Signoff** uses the **Project Test Environment** by default.
 - Published **Signoff Statuses** assume **Dependency Freshness**.
 - Frontend checks use **Frontend Lockfile Detection** when a consuming Laravel project has frontend assets.
+- A **Local Hook Guard** may run before commit or push, but it does not replace local CI or **Signoff Statuses**.
 
 ## Example dialogue
 
@@ -91,6 +96,8 @@ _Avoid_: fork, preset, app template
 > **Domain expert:** "No — the scaffold should have an **Adoption Guide** that can be copied without replacing a project's contribution policy."
 > **Dev:** "Should a `laravel/react-starter-kit` app use the generic scaffold unchanged?"
 > **Domain expert:** "No — use an **Integration Profile** that wraps the starter kit's existing scripts."
+> **Dev:** "Can Husky replace local CI?"
+> **Domain expert:** "No — Husky is only a **Local Hook Guard**. Local CI and **Signoff Statuses** remain authoritative."
 
 ## Flagged ambiguities
 
