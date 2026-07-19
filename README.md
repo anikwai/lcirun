@@ -1,4 +1,4 @@
-# Local CI cignoff scaffold
+# Local CI signoff scaffold
 
 This repository is a copyable scaffold for Laravel projects that want local CI to be the authoritative quality gate and GitHub to record explicit signoff statuses.
 
