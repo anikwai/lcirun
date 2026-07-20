@@ -30,7 +30,9 @@ The upstream starter-kit skeleton may not include those lockfiles before project
 
 ## Checks
 
-The tailored runner installs locked PHP and npm dependencies, runs strict Composer and npm security audits, builds frontend assets, and then delegates to the starter kit's `composer ci:check` script.
+The tailored runner installs locked PHP and npm dependencies, creates `.env` and generates `APP_KEY` when `.env` is missing, runs strict Composer and npm security audits, builds frontend assets, and then delegates to the starter kit's `composer ci:check` script.
+
+Feature tests need an application key. Prefer letting `bin/ci` create `.env`, and optionally add an `APP_KEY` entry to `phpunit.xml` so tests remain self-contained without a local `.env`. See [LOCAL_CI.md](../../LOCAL_CI.md#application-key-for-tests).
 
 ## Optional Husky Hooks
 
@@ -54,4 +56,10 @@ After `./bin/ci` passes on a committed and pushed branch:
 
 ```bash
 gh signoff lint static tests security
+```
+
+Require those statuses on `main` (local-only contract; no GitHub Actions quality workflow needed):
+
+```bash
+gh signoff install --branch main lint static tests security
 ```

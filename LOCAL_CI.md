@@ -4,6 +4,23 @@ Modern developer machines are fast enough to run linting, static analysis, secur
 
 The model is inspired by DHH/Basecamp's local-CI approach: run the checks where the code is written, then require explicit signoff statuses before merge.
 
+## Recommended Contract: Local-Only
+
+The default adoption path does **not** run quality checks on GitHub Actions. Local `./bin/ci` is the gate; GitHub only records explicit signoff statuses:
+
+1. Copy the starter files (skip the optional workflow).
+2. Install tools and `gh-signoff`.
+3. Run `./bin/ci`.
+4. Commit and push.
+5. Run `gh signoff lint static tests security`.
+6. Require those signoff contexts with branch protection:
+
+```bash
+gh signoff install --branch main lint static tests security
+```
+
+Green checkmarks on commits and PRs come from the `signoff/*` statuses, not from a remote workflow.
+
 ## Why This Approach?
 
 - Fast feedback without waiting for a remote queue.
@@ -19,12 +36,9 @@ Copy these files into a Laravel project:
 bin/ci
 phpstan.neon.dist
 LOCAL_CI.md
-starter-files/github-workflows/ci.yml
 ```
 
-The workflow file is optional. Copy it to `.github/workflows/ci.yml` in the consuming project when the project still wants a remote backup check.
-
-The starter defaults to PHP 8.5 for the optional GitHub Actions backup workflow.
+Only copy `starter-files/github-workflows/ci.yml` to `.github/workflows/ci.yml` when you intentionally want an optional remote backup check. The starter defaults that workflow to PHP 8.5.
 
 ## Laravel React Starter Kit Profile
 
@@ -76,6 +90,7 @@ Run:
 The starter script runs:
 
 - `composer install` for dependency freshness.
+- Creates `.env` from `.env.example` and generates `APP_KEY` when `.env` is missing (clean checkouts and optional remote runs).
 - `composer audit` as a strict security check.
 - Laravel Pint in test mode.
 - Larastan/PHPStan.
@@ -85,6 +100,23 @@ The starter script runs:
 The PHP dependency check expects `composer.lock` to be committed. If the project does not have a lockfile, create and commit one before relying on local signoff.
 
 By default, tests respect the consuming project's `.env.testing` and test database configuration. SQLite in-memory tests can be a useful project-specific speed optimization, but the scaffold does not force SQLite because that can hide MySQL, PostgreSQL, collation, JSON, queue, tenancy, or migration behavior.
+
+### Application Key For Tests
+
+Laravel feature tests need an `APP_KEY`. Local machines usually already have one in `.env`. For environments without a populated `.env` (fresh clones, optional GitHub Actions backups), either:
+
+- Let `bin/ci` create `.env` and run `php artisan key:generate`, or
+- Add a testing key to `phpunit.xml` so Pest/PHPUnit are self-contained:
+
+```xml
+<env name="APP_KEY" value="base64:GENERATE_A_RANDOM_32_BYTE_KEY_HERE=" force="true"/>
+```
+
+Generate a value with:
+
+```bash
+php -r "echo 'base64:'.base64_encode(random_bytes(32)).PHP_EOL;"
+```
 
 ## Publish GitHub Signoff Statuses
 
@@ -154,7 +186,7 @@ If a project has `package.json` but no recognized lockfile, or if it has multipl
 
 ## Optional Remote Backup
 
-The included `starter-files/github-workflows/ci.yml` runs `./bin/ci` on GitHub Actions after it is copied to `.github/workflows/ci.yml` in a consuming project. Treat it as a backup or sanity check, not the primary source of truth, unless your team intentionally changes the contract.
+The included `starter-files/github-workflows/ci.yml` can run `./bin/ci` on GitHub Actions after it is copied to `.github/workflows/ci.yml`. Skip this file for the recommended local-only contract. If you do enable it, treat it as a backup or sanity check, not the primary source of truth.
 
 ## Customizations
 

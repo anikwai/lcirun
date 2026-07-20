@@ -12,7 +12,8 @@ Copy these starter files into a Laravel project:
 - `bin/ci`
 - `phpstan.neon.dist`
 - `LOCAL_CI.md`
-- `starter-files/github-workflows/ci.yml` if you want the optional remote backup workflow
+
+Skip the GitHub Actions workflow unless you intentionally want an optional remote backup. The recommended contract is local-only: `./bin/ci` plus `gh signoff`.
 
 For applications created from `laravel/react-starter-kit`, use the tailored profile instead:
 
@@ -32,10 +33,11 @@ Run the local checks:
 ./bin/ci
 ```
 
-After the checks pass on a committed and pushed branch, publish signoff statuses:
+After the checks pass on a committed and pushed branch, publish signoff statuses and require them on `main`:
 
 ```bash
 gh signoff lint static tests security
+gh signoff install --branch main lint static tests security
 ```
 
 See [LOCAL_CI.md](./LOCAL_CI.md) for the full adoption guide.
