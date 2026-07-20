@@ -16,6 +16,12 @@ fi
 echo "Installing PHP dependencies..."
 composer install --no-interaction --prefer-dist
 
+if [ ! -f .env ]; then
+    echo "Creating .env from .env.example..."
+    cp .env.example .env
+    php artisan key:generate --force --no-interaction
+fi
+
 echo "Running Composer security audit..."
 composer audit
 
