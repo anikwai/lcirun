@@ -1,6 +1,9 @@
 # Local CI signoff scaffold
 
-This repository is a copyable scaffold for Laravel projects that want local CI to be the authoritative quality gate and GitHub to record explicit signoff statuses.
+This repository is a copyable scaffold for Laravel projects that want local CI to be the authoritative quality gate and GitHub to record explicit signoff statuses. No need to use this if your codebase is small.
+
+<img width="1632" height="798" alt="image" src="https://github.com/user-attachments/assets/8e16f81c-794e-41e2-855a-4589140d7f6b" />
+
 
 ## What To Copy
 
@@ -36,3 +39,5 @@ gh signoff lint static tests security
 ```
 
 See [LOCAL_CI.md](./LOCAL_CI.md) for the full adoption guide.
+
+
